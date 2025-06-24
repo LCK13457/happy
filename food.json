@@ -1,0 +1,47 @@
+{
+    "fried chicken": {
+        "ingredients": ["chicken", "wheat flour", "salt", "vegetable oil", "spices"],
+        "sodium": 1200,
+        "sugar": 2,
+        "saturatedFat": 8,
+        "glycemicIndex": 45,
+        "status": "warning",
+        "message": "High in sodium and saturated fat - not recommended for three highs"
+    },
+    "steamed salmon": {
+        "ingredients": ["salmon", "lemon", "dill", "black pepper"],
+        "sodium": 150,
+        "sugar": 1,
+        "saturatedFat": 2,
+        "glycemicIndex": 0,
+        "status": "safe",
+        "message": "Excellent choice! Rich in omega-3 and low in problematic nutrients"
+    },
+    "white bread": {
+        "ingredients": ["wheat flour", "water", "yeast", "sugar", "salt"],
+        "sodium": 300,
+        "sugar": 5,
+        "saturatedFat": 0.5,
+        "glycemicIndex": 75,
+        "status": "warning",
+        "message": "High glycemic index - can spike blood sugar levels"
+    },
+    "vegetable stir fry": {
+        "ingredients": ["broccoli", "carrots", "bell peppers", "soy sauce", "garlic", "ginger", "sesame oil"],
+        "sodium": 800,
+        "sugar": 6,
+        "saturatedFat": 1,
+        "glycemicIndex": 30,
+        "status": "caution",
+        "message": "Moderate sodium content - consider low-sodium soy sauce"
+    },
+    "oatmeal": {
+        "ingredients": ["oats", "water", "cinnamon"],
+        "sodium": 5,
+        "sugar": 1,
+        "saturatedFat": 0.5,
+        "glycemicIndex": 55,
+        "status": "safe",
+        "message": "Great choice! High fiber helps regulate blood sugar and cholesterol"
+    }
+}
