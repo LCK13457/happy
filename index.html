@@ -105,6 +105,112 @@
     </style>
 </head>
 <body>
+
+<script>
+    // Global variable to hold the food database
+    let foodDatabase = {};
+    
+    // Load the JSON file when the page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        fetch('foods.json')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                foodDatabase = data;
+                console.log('Food database loaded successfully');
+            })
+            .catch(error => {
+                console.error('Error loading food database:', error);
+                alert('Error loading food data. Please try again later.');
+            });
+    });
+
+    function checkFood() {
+        const foodInput = document.getElementById('foodInput').value.toLowerCase();
+        const resultSection = document.getElementById('resultSection');
+        const loading = document.getElementById('loading');
+        
+        if (!foodInput) {
+            alert("Please enter a food name");
+            return;
+        }
+        
+        loading.style.display = "block";
+        resultSection.style.display = "none";
+        
+        // Check if database is loaded
+        if (Object.keys(foodDatabase).length === 0) {
+            setTimeout(() => {
+                loading.style.display = "none";
+                resultSection.innerHTML = `
+                    <div class="warning">
+                        <p>Food database is still loading. Please try again in a moment.</p>
+                    </div>
+                `;
+                resultSection.style.display = "block";
+            }, 1000);
+            return;
+        }
+        
+        // Simulate database search delay
+        setTimeout(() => {
+            loading.style.display = "none";
+            
+            if (foodDatabase[foodInput]) {
+                const food = foodDatabase[foodInput];
+                let resultHTML = `
+                    <h3>Results for: ${foodInput.charAt(0).toUpperCase() + foodInput.slice(1)}</h3>
+                    <p><strong>Ingredients:</strong> ${food.ingredients.join(', ')}</p>
+                    <table>
+                        <tr>
+                            <th>Nutrient</th>
+                            <th>Amount (per serving)</th>
+                            <th>Concern Level</th>
+                        </tr>
+                        <tr>
+                            <td>Sodium</td>
+                            <td>${food.sodium}mg</td>
+                            <td>${food.sodium > 500 ? 'High' : 'Low'}</td>
+                        </tr>
+                        <tr>
+                            <td>Sugar</td>
+                            <td>${food.sugar}g</td>
+                            <td>${food.sugar > 5 ? 'High' : 'Low'}</td>
+                        </tr>
+                        <tr>
+                            <td>Saturated Fat</td>
+                            <td>${food.saturatedFat}g</td>
+                            <td>${food.saturatedFat > 3 ? 'High' : 'Low'}</td>
+                        </tr>
+                        <tr>
+                            <td>Glycemic Index</td>
+                            <td>${food.glycemicIndex}</td>
+                            <td>${food.glycemicIndex > 70 ? 'High' : food.glycemicIndex > 55 ? 'Medium' : 'Low'}</td>
+                        </tr>
+                    </table>
+                    <div class="${food.status === 'warning' ? 'warning' : 'safe'}" style="margin-top: 20px; padding: 15px;">
+                        <strong>Recommendation:</strong> ${food.message}
+                    </div>
+                `;
+                
+                resultSection.innerHTML = resultHTML;
+                resultSection.style.display = "block";
+            } else {
+                resultSection.innerHTML = `
+                    <div class="warning">
+                        <p>Food not found in our database. Please try another item or consult with a nutritionist.</p>
+                        <p>Common safe foods for three highs: steamed fish, leafy greens, whole grains, berries, nuts (unsalted).</p>
+                    </div>
+                `;
+                resultSection.style.display = "block";
+            }
+        }, 1000);
+    }
+</script>    
     <div class="container">
         <h1>Elderly Diet Management for Three Highs Prevention</h1>
         
