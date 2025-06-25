@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elderly Diet Management for Three Highs Prevention</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        h1, h2 {
+            color: #2c3e50;
+            text-align: center;
+        }
+        .container {
+            background-color: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .health-tips {
+            background-color: #e8f4f8;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            animation: fadeIn 1s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .tip {
+            margin-bottom: 15px;
+            padding: 10px;
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .tip h3 {
+            color: #3498db;
+            margin-top: 0;
+        }
+        .close-tips {
+            float: right;
+            background: none;
+            border: none;
+            font-size: 1.2em;
+            cursor: pointer;
+            color: #7f8c8d;
+        }
+        .search-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: #e8f4f8;
+            border-radius: 8px;
+        }
+        .result-section {
+            display: none;
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        .warning {
+            background-color: #fde8e8;
+            border-left: 4px solid #e74c3c;
+        }
+        .safe {
+            background-color: #e8f8e8;
+            border-left: 4px solid #2ecc71;
+        }
+        input, select, button {
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            cursor: pointer;
+            border: none;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #3498db;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        .nutrient-info {
+            margin-top: 30px;
+        }
+        .nutrient-card {
+            display: inline-block;
+            width: 30%;
+            margin: 1%;
+            padding: 15px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            vertical-align: top;
+        }
+        .nutrient-card h3 {
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 8px;
+        }
+        #loading {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+        @media (max-width: 768px) {
+            .nutrient-card {
+                width: 100%;
+                margin: 10px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="health-tips" id="healthTips">
+        <button class="close-tips" onclick="document.getElementById('healthTips').style.display='none'">×</button>
+        <h2>Daily Health Tips for Elderly</h2>
+        <div class="tip">
+            <h3>Hydration is Key</h3>
+            <p>Drink at least 6-8 glasses of water daily to maintain proper body function and help control blood pressure.</p>
+        </div>
+        <div class="tip">
+            <h3>Balanced Meals</h3>
+            <p>Include vegetables (50%), lean protein (25%), and whole grains (25%) in each meal to manage the three highs.</p>
+        </div>
+        <div class="tip">
+            <h3>Reduce Sodium</h3>
+            <p>Limit processed foods and use herbs/spices instead of salt to help control hypertension.</p>
+        </div>
+        <div class="tip">
+            <h3>Healthy Snacking</h3>
+            <p>Choose nuts, fresh fruits, or yogurt instead of sugary or salty snacks.</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <h1>Elderly Diet Management for Three Highs Prevention</h1>
+        
+        <div class="search-section">
+            <h2>Check Food Ingredients</h2>
+            <p>Enter a food item to check if it's suitable for elderly with three highs conditions (high blood pressure, high cholesterol, high blood sugar).</p>
+            
+            <div>
+                <input type="text" id="foodInput" placeholder="Enter food name (e.g., fried chicken)" style="width: 70%;">
+                <button onclick="checkFood()">Check Ingredients</button>
+            </div>
+            <div id="loading">Loading food information...</div>
+        </div>
+        
+        <div class="result-section" id="resultSection"></div>
+        
+        <div class="nutrient-info">
+            <h2>Key Nutrients to Monitor</h2>
+            <div class="nutrient-card">
+                <h3>Sodium</h3>
+                <p><strong>Recommended:</strong> &lt; 1500mg/day</p>
+                <p>High sodium intake can raise blood pressure. Avoid processed foods and canned goods with added salt.</p>
+            </div>
+            <div class="nutrient-card">
+                <h3>Sugar</h3>
+                <p><strong>Recommended:</strong> &lt; 25g/day</p>
+                <p>Excess sugar contributes to diabetes. Limit sweets, sugary drinks, and refined carbohydrates.</p>
+            </div>
+            <div class="nutrient-card">
+                <h3>Saturated Fat</h3>
+                <p><strong>Recommended:</strong> &lt; 13g/day</p>
+                <p>Too much saturated fat can increase cholesterol. Choose lean meats and plant-based proteins.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variable to hold the food database
+        let foodDatabase = {};
+        
+        // Load the JSON file when the page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            fetch('foods.json')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    foodDatabase = data;
+                    console.log('Food database loaded successfully');
+                })
+                .catch(error => {
+                    console.error('Error loading food database:', error);
+                    alert('Error loading food data. Please try again later.');
+                });
+        });
+
+        function checkFood() {
+            const foodInput = document.getElementById('foodInput').value.toLowerCase();
+            const resultSection = document.getElementById('resultSection');
+            const loading = document.getElementById('loading');
+            
+            if (!foodInput) {
+                alert("Please enter a food name");
+                return;
+            }
+            
+            loading.style.display = "block";
+            resultSection.style.display = "none";
+            
+            // Check if database is loaded
+            if (Object.keys(foodDatabase).length === 0) {
+                setTimeout(() => {
+                    loading.style.display = "none";
+                    resultSection.innerHTML = `
+                        <div class="warning">
+                            <p>Food database is still loading. Please try again in a moment.</p>
+                        </div>
+                    `;
+                    resultSection.style.display = "block";
+                }, 1000);
+                return;
+            }
+            
+            // Simulate database search delay
+            setTimeout(() => {
+                loading.style.display = "none";
+                
+                if (foodDatabase[foodInput]) {
+                    const food = foodDatabase[foodInput];
+                    let resultHTML = `
+                        <h3>Results for: ${foodInput.charAt(0).toUpperCase() + foodInput.slice(1)}</h3>
+                        <p><strong>Ingredients:</strong> ${food.ingredients.join(', ')}</p>
+                        <table>
+                            <tr>
+                                <th>Nutrient</th>
+                                <th>Amount (per serving)</th>
+                                <th>Concern Level</th>
+                            </tr>
+                            <tr>
+                                <td>Sodium</td>
+                                <td>${food.sodium}mg</td>
+                                <td>${food.sodium > 500 ? 'High' : 'Low'}</td>
+                            </tr>
+                            <tr>
+                                <td>Sugar</td>
+                                <td>${food.sugar}g</td>
+                                <td>${food.sugar > 5 ? 'High' : 'Low'}</td>
+                            </tr>
+                            <tr>
+                                <td>Saturated Fat</td>
+                                <td>${food.saturatedFat}g</td>
+                                <td>${food.saturatedFat > 3 ? 'High' : 'Low'}</td>
+                            </tr>
+                            <tr>
+                                <td>Glycemic Index</td>
+                                <td>${food.glycemicIndex}</td>
+                                <td>${food.glycemicIndex > 70 ? 'High' : food.glycemicIndex > 55 ? 'Medium' : 'Low'}</td>
+                            </tr>
+                        </table>
+                        <div class="${food.status === 'warning' ? 'warning' : 'safe'}" style="margin-top: 20px; padding: 15px;">
+                            <strong>Recommendation:</strong> ${food.message}
+                        </div>
+                    `;
+                    
+                    resultSection.innerHTML = resultHTML;
+                    resultSection.style.display = "block";
+                } else {
+                    resultSection.innerHTML = `
+                        <div class="warning">
+                            <p>Food not found in our database. Please try another item or consult with a nutritionist.</p>
+                            <p>Common safe foods for three highs: steamed fish, leafy greens, whole grains, berries, nuts (unsalted).</p>
+                        </div>
+                    `;
+                    resultSection.style.display = "block";
+                }
+            }, 1000);
+        }
+    </script>
+</body>
+</html>
