@@ -161,7 +161,17 @@
                 reader.onload = function(e) {
                     imagePreview.src = e.target.result;
                     imagePreview.style.display = 'block'; // Show the image preview
-                    base64ImageData = e.target.result.split(',')[1]; // Get only the base64 part
+                    // Get only the base64 part, and ensure it's a valid data URI
+                    const [mimeTypePart, base64Data] = e.target.result.split(',');
+                    base64ImageData = base64Data;
+                    // Determine the actual mime type from the data URL prefix
+                    const mimeTypeMatch = mimeTypePart.match(/data:(.*?);base64/);
+                    if (mimeTypeMatch && mimeTypeMatch[1]) {
+                        imagePreview.dataset.mimeType = mimeTypeMatch[1];
+                    } else {
+                        imagePreview.dataset.mimeType = 'image/png'; // Default or fallback
+                    }
+
                     detectButton.disabled = false; // Enable the detect button
                     resultsArea.innerHTML = '<p class="text-gray-600">Image loaded. Click "Detect Food" to analyze.</p>';
                 };
@@ -170,6 +180,7 @@
                 imagePreview.src = '#';
                 imagePreview.style.display = 'none';
                 base64ImageData = '';
+                imagePreview.dataset.mimeType = '';
                 detectButton.disabled = true;
                 resultsArea.innerHTML = '<p class="text-gray-600">Upload an image and click "Detect Food" to see the results.</p>';
             }
@@ -188,37 +199,38 @@
             resultsArea.innerHTML = ''; // Clear previous results
 
             try {
-                // IMPORTANT: The __app_id and __firebase_config and __initial_auth_token are provided by the Canvas environment.
-                // In a real application, you would manage API keys securely on a backend server.
-                const apiKey = ""; // Canvas will automatically provide the API key at runtime.
+                // OpenRouter API Key provided by the user
+                const apiKey = "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";
+                const apiUrl = "https://openrouter.ai/api/v1/chat/completions";
+                const modelName = "ollama/llava:7b"; // A suitable model for vision on OpenRouter
 
                 const prompt = "What food items are present in this image? Provide a detailed list and description.";
-
-                const chatHistory = [];
-                chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+                const mimeType = imagePreview.dataset.mimeType || 'image/png'; // Use detected mime type or fallback
 
                 const payload = {
-                    contents: [
+                    model: modelName,
+                    messages: [
                         {
                             role: "user",
-                            parts: [
-                                { text: prompt },
+                            content: [
+                                { type: "text", text: prompt },
                                 {
-                                    inlineData: {
-                                        mimeType: "image/png", // Assuming image is png, adjust if needed
-                                        data: base64ImageData
+                                    type: "image_url",
+                                    image_url: {
+                                        url: `data:${mimeType};base64,${base64ImageData}`
                                     }
                                 }
                             ]
                         }
-                    ],
+                    ]
                 };
-
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
 
                 const response = await fetch(apiUrl, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${apiKey}`
+                    },
                     body: JSON.stringify(payload)
                 });
 
@@ -229,13 +241,12 @@
 
                 const result = await response.json();
 
-                if (result.candidates && result.candidates.length > 0 &&
-                    result.candidates[0].content && result.candidates[0].content.parts &&
-                    result.candidates[0].content.parts.length > 0) {
-                    const text = result.candidates[0].content.parts[0].text;
+                if (result.choices && result.choices.length > 0 &&
+                    result.choices[0].message && result.choices[0].message.content) {
+                    const text = result.choices[0].message.content;
                     resultsArea.innerHTML = `<p class="text-gray-800 fade-in">${text}</p>`;
                 } else {
-                    resultsArea.innerHTML = '<p class="text-red-500">No food items detected or unexpected API response structure.</p>';
+                    resultsArea.innerHTML = '<p class="text-red-500">No food items detected or unexpected API response structure from OpenRouter.</p>';
                 }
             } catch (error) {
                 console.error('Error detecting food:', error);
