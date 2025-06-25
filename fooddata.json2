@@ -1,3 +1,23 @@
+{
+  "hummus": {
+    "ingredients": ["chickpeas", "tahini", "olive oil", "lemon juice", "garlic"],
+    "sodium": 300,
+    "sugar": 2,
+    "saturatedFat": 2,
+    "glycemicIndex": 25,
+    "status": "safe",
+    "message": "Generally safe in moderation. Contains healthy fats and fiber."
+  },
+  "hot dog": {
+    "ingredients": ["processed meat", "salt", "preservatives"],
+    "sodium": 800,
+    "sugar": 3,
+    "saturatedFat": 6,
+    "glycemicIndex": 28,
+    "status": "warning",
+    "message": "High in sodium and saturated fat. Not recommended for regular consumption."
+  }
+}
 <!DOCTYPE html>
 <html lang="en">
 <head>
