@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Health Tips</title>
+    <style>
+        :root {
+            --primary-color: #2e8b57;
+            --secondary-color: #f0f8ff;
+            --text-color: #333;
+            --light-text: #666;
+            --white: #ffffff;
+            --shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            --orange: #e67e22;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: var(--secondary-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+        
+        .health-tip {
+            background-color: var(--white);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            padding: 25px;
+            max-width: 450px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        
+        .health-tip:hover {
+            transform: translateY(-5px);
+        }
+        
+        h1 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            font-size: 1.8rem;
+        }
+        
+        .tip-content {
+            font-size: 1.1rem;
+            margin: 20px 0;
+            color: var(--text-color);
+            padding: 0 10px;
+        }
+        
+        .emoji {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            display: block;
+        }
+        
+        .date {
+            color: var(--light-text);
+            font-style: italic;
+            margin-top: 15px;
+            font-size: 0.9rem;
+        }
+        
+        .tip-actions {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .next-tip {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .next-tip:hover {
+            background-color: #1f6b47;
+            transform: scale(1.05);
+        }
+        
+        .benefits {
+            text-align: left;
+            margin-top: 15px;
+            padding-left: 20px;
+        }
+        
+        .benefits li {
+            margin-bottom: 8px;
+        }
+
+        .food-tip {
+            color: var(--orange);
+        }
+
+        .food-bg {
+            background-color: #fff9f0;
+        }
+    </style>
+</head>
+<body>
+    <div class="health-tip" id="tip-container">
+        <h1 id="tip-title">🌿 Daily Health Tip 🌿</h1>
+        <div class="emoji" id="tip-emoji">💧</div>
+        <div class="tip-content" id="tip-text">
+            <strong>Stay hydrated!</strong> Drink at least 8 glasses (2 liters) of water daily.
+            <div class="benefits">
+                <strong>Benefits:</strong>
+                <ul>
+                    <li>Boosts energy levels</li>
+                    <li>Improves skin health</li>
+                    <li>Supports digestion</li>
+                    <li>Enhances cognitive function</li>
+                </ul>
+            </div>
+        </div>
+        <div class="date" id="current-date"></div>
+        <div class="tip-actions">
+            <button class="next-tip" onclick="toggleTip()">Show Nutrition Tip</button>
+        </div>
+    </div>
+
+    <script>
+        // Display current date
+        const now = new Date();
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        document.getElementById('current-date').textContent = now.toLocaleDateString('en-US', options);
+
+        // Tip data
+        const tips = [
+            {
+                title: "🌿 Hydration Tip 💧",
+                emoji: "💧",
+                content: `<strong>Stay hydrated!</strong> Drink at least 8 glasses (2 liters) of water daily.
+                <div class="benefits">
+                    <strong>Benefits:</strong>
+                    <ul>
+                        <li>Boosts energy levels</li>
+                        <li>Improves skin health</li>
+                        <li>Supports digestion</li>
+                        <li>Enhances cognitive function</li>
+                    </ul>
+                </div>`,
+                buttonText: "Show Nutrition Tip",
+                bgClass: ""
+            },
+            {
+                title: "🍎 Nutrition Tip 🥗",
+                emoji: "🌱",
+                content: `<strong>Eat the rainbow!</strong> Include colorful fruits and vegetables in your meals.
+                <div class="benefits">
+                    <strong>Benefits:</strong>
+                    <ul>
+                        <li>Reduces disease risk</li>
+                        <li>Provides essential vitamins</li>
+                        <li>Boosts immunity</li>
+                        <li>Supports gut health</li>
+                    </ul>
+                </div>`,
+                buttonText: "Show Hydration Tip",
+                bgClass: "food-bg",
+                titleClass: "food-tip"
+            }
+        ];
+
+        let currentTip = 0;
+
+        function toggleTip() {
+            currentTip = (currentTip + 1) % tips.length;
+            updateTip();
+        }
+
+        function updateTip() {
+            const tip = tips[currentTip];
+            document.getElementById('tip-title').textContent = tip.title;
+            document.getElementById('tip-emoji').textContent = tip.emoji;
+            document.getElementById('tip-text').innerHTML = tip.content;
+            document.querySelector('.next-tip').textContent = tip.buttonText;
+            
+            // Update classes
+            const container = document.getElementById('tip-container');
+            container.className = 'health-tip ' + tip.bgClass;
+            document.getElementById('tip-title').className = tip.titleClass || '';
+        }
+    </script>
+</body>
+</html>
