@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>食物營養查詢</title>
+  <script src="https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@babel/standalone@7.22.9/babel.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+  <div id="root"></div>
+  <script type="text/babel">
+    function App() {
+      const [foodQuery, setFoodQuery] = React.useState('');
+      const [nutritionData, setNutritionData] = React.useState(null);
+      const [error, setError] = React.useState('');
+      const [loading, setLoading] = React.useState(false);
+      const [conditions, setConditions] = React.useState({
+        hypertension: false,
+        diabetes: false,
+        hyperlipidemia: false,
+        heart_disease: false,
+        kidney_disease: false,
+      });
+      const [showTip, setShowTip] = React.useState(true);
+
+      // 健康小貼士
+      const healthTips = [
+        '保持均衡飲食，多吃蔬果，減少油膩食物以保護心臟健康。',
+        '每天飲用足夠水，幫助腎臟功能，建議每日 1.5-2 升。',
+        '減少鹽分攝取，控制血壓，選擇低鈉食物如新鮮蔬菜。',
+        '定期運動，如散步或太極，有助於控制血糖和心血管健康。',
+        '避免高糖食物，選擇全穀物以穩定血糖，預防糖尿病惡化。'
+      ];
+
+      // 隨機選擇一個提示
+      const [currentTip, setCurrentTip] = React.useState(
+        healthTips[Math.floor(Math.random() * healthTips.length)]
+      );
+
+      // 模擬食物數據庫
+      const mockFoodDatabase = {
+        '蘋果': {
+          name: '蘋果',
+          ingredients: ['蘋果', '天然糖分', '膳食纖維'],
+          nutrition: {
+            calories: '52 大卡/100克',
+            protein: '0.3 克',
+            fat: '0.2 克',
+            carbs: '14 克',
+            sodium: '1 毫克',
+            sugar: '10 克'
+          },
+          suitability: {
+            '高血壓': '適合（低鈉）',
+            '糖尿病': '適量（含天然糖分）',
+            '高膽固醇': '適合（無膽固醇）',
+            '心臟病': '適合（富含纖維）',
+            '腎病': '適合（低鈉低鉀）'
+          }
+        },
+        '雞蛋': {
+          name: '雞蛋',
+          ingredients: ['雞蛋', '蛋白質', '脂肪'],
+          nutrition: {
+            calories: '155 大卡/100克',
+            protein: '13 克',
+            fat: '11 克',
+            carbs: '1.1 克',
+            sodium: '124 毫克',
+            sugar: '0.3 克'
+          },
+          suitability: {
+            '高血壓': '適量（注意鈉含量）',
+            '糖尿病': '適合（優質蛋白）',
+            '高膽固醇': '限量（蛋黃含膽固醇）',
+            '心臟病': '適量（控制攝入量）',
+            '腎病': '諮詢醫生（高蛋白）'
+          }
+        },
+        '白飯': {
+          name: '白飯',
+          ingredients: ['白米', '碳水化合物'],
+          nutrition: {
+            calories: '130 大卡/100克',
+            protein: '2.7 克',
+            fat: '0.3 克',
+            carbs: '28 克',
+            sodium: '1 毫克',
+            sugar: '0.1 克'
+          },
+          suitability: {
+            '高血壓': '適合（低鈉）',
+            '糖尿病': '限量（高GI）',
+            '高膽固醇': '適合（無膽固醇）',
+            '心臟病': '適量（控制份量）',
+            '腎病': '適量（低蛋白）'
+          }
+        }
+      };
+
+      // 處理健康狀況選擇
+      const handleConditionChange = (condition) => {
+        setConditions(prev => ({ ...prev, [condition]: !prev[condition] }));
+      };
+
+      // 處理查詢
+      const handleSubmit = async (e) => {
+        e.preventDefault();
+        if (!foodQuery.trim()) {
+          setError('請輸入食物名稱。');
+          return;
+        }
+        setError('');
+        setLoading(true);
+
+        // 模擬 API 請求延遲
+        await new Promise(resolve => setTimeout(resolve, 800));
+
+        const foodName = foodQuery.toLowerCase();
+        const foundFood = mockFoodDatabase[foodName] || Object.values(mockFoodDatabase).find(
+          food => food.name.includes(foodName)
+        );
+
+        if (foundFood) {
+          // 過濾只顯示用戶選擇的健康狀況
+          const filteredSuitability = {};
+          Object.keys(conditions).forEach(condition => {
+            if (conditions[condition]) {
+              const chineseCondition = {
+                hypertension: '高血壓',
+                diabetes: '糖尿病',
+                hyperlipidemia: '高膽固醇',
+                heart_disease: '心臟病',
+                kidney_disease: '腎病'
+              }[condition];
+              filteredSuitability[chineseCondition] = foundFood.suitability[chineseCondition];
+            }
+          });
+
+          setNutritionData({
+            ...foundFood,
+            suitability: Object.keys(filteredSuitability).length > 0 
+              ? filteredSuitability 
+              : foundFood.suitability
+          });
+        } else {
+          setError('找不到此食物的營養數據。試試「蘋果」、「雞蛋」或「白飯」。');
+          setNutritionData(null);
+        }
+        setLoading(false);
+      };
+
+      return (
+        <div className="relative">
+          {/* 健康小貼士彈窗 */}
+          {showTip && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+              <div className="bg-white p-8 rounded-lg shadow-lg max-w-md">
+                <h2 className="text-2xl font-bold mb-4">健康小貼士</h2>
+                <p className="text-xl mb-6">{currentTip}</p>
+                <button
+                  onClick={() => setShowTip(false)}
+                  className="w-full bg-blue-500 text-white p-3 rounded text-xl hover:bg-blue-600"
+                >
+                  我明白
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* 主內容 */}
+          <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+            <h1 className="text-3xl font-bold text-center mb-6">食物營養查詢</h1>
+            <div className="mb-4">
+              <h3 className="text-xl font-semibold mb-2">選擇健康狀況</h3>
+              <div className="grid grid-cols-1 gap-2">
+                {[
+                  { id: 'hypertension', label: '高血壓' },
+                  { id: 'diabetes', label: '糖尿病' },
+                  { id: 'hyperlipidemia', label: '高膽固醇' },
+                  { id: 'heart_disease', label: '心臟病' },
+                  { id: 'kidney_disease', label: '腎病' },
+                ].map(condition => (
+                  <label key={condition.id} className="flex items-center text-xl">
+                    <input
+                      type="checkbox"
+                      checked={conditions[condition.id]}
+                      onChange={() => handleConditionChange(condition.id)}
+                      className="mr-2 h-5 w-5"
+                    />
+                    {condition.label}
+                  </label>
+                ))}
+              </div>
+            </div>
+            <form onSubmit={handleSubmit} className="mb-4">
+              <input
+                type="text"
+                value={foodQuery}
+                onChange={(e) => setFoodQuery(e.target.value)}
+                placeholder="輸入食物名稱（例如：蘋果）"
+                className="w-full p-3 border rounded text-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full mt-3 bg-blue-500 text-white p-3 rounded text-xl hover:bg-blue-600 disabled:bg-blue-300"
+              >
+                {loading ? '載入中...' : '查詢'}
+              </button>
+            </form>
+            {error && <p className="text-red-500 text-center text-xl">{error}</p>}
+            {nutritionData && (
+              <div className="mt-4 p-4 bg-gray-50 rounded">
+                <h2 className="text-2xl font-semibold">{nutritionData.name}</h2>
+                <p className="text-xl"><strong>成分：</strong> {nutritionData.ingredients.join(', ')}</p>
+                <p className="text-xl"><strong>卡路里：</strong> {nutritionData.nutrition.calories}</p>
+                <p className="text-xl"><strong>蛋白質：</strong> {nutritionData.nutrition.protein}</p>
+                <p className="text-xl"><strong>脂肪：</strong> {nutritionData.nutrition.fat}</p>
+                <p className="text-xl"><strong>碳水化合物：</strong> {nutritionData.nutrition.carbs}</p>
+                <p className="text-xl"><strong>鈉：</strong> {nutritionData.nutrition.sodium}</p>
+                <p className="text-xl"><strong>糖：</strong> {nutritionData.nutrition.sugar}</p>
+                <h3 className="text-xl font-semibold mt-4">適合性分析</h3>
+                {Object.entries(nutritionData.suitability).map(([condition, status]) => (
+                  <p key={condition} className="text-xl">{condition}: {status}</p>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      );
+    }
+
+    ReactDOM.render(<App />, document.getElementById('root'));
+  </script>
+</body>
+</html>
