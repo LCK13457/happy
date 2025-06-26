@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>樂齡健康飲食指南 - 附食物資訊查詢</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: "Microsoft JhengHei", sans-serif;
+            margin: 20px;
+            background-color: #f0f8ff; /* 淡藍色背景 */
+            color: #333;
+        }
+        h1 {
+            color: #ff4500; /* 橘紅色標題 */
+            font-size: 4em; /* 超大字體 */
+            text-align: center;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        h2 {
+            color: #2e8b57; /* 海綠色小標題 */
+            font-size: 2.5em;
+            border-bottom: 3px solid #2e8b57;
+            padding-bottom: 10px;
+            margin-top: 40px;
+        }
+        p, ul, li {
+            font-size: 1.8em; /* 大字體 */
+            line-height: 1.8;
+            color: #555;
+        }
+        .section {
+            background-color: #ffffff; /* 白色區塊背景 */
+            border-radius: 15px;
+            padding: 25px 35px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .warning {
+            background-color: #ffe0b2; /* 淺橘色警告區塊 */
+            border: 5px solid #ff6347; /* 番茄紅邊框 */
+            padding: 30px;
+            border-radius: 20px;
+            margin-top: 40px;
+            margin-bottom: 40px;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+        }
+        .warning h2 {
+            color: #dc143c; /* 鮮紅色警告標題 */
+            font-size: 3em;
+            text-align: center;
+            margin-top: 0;
+            margin-bottom: 20px;
+            border-bottom: none;
+        }
+        .warning p, .warning ul, .warning li {
+            color: #8b0000; /* 深紅色文字 */
+            font-size: 2.2em;
+            font-weight: bold;
+        }
+        ul {
+            list-style-type: disc;
+            padding-left: 30px;
+        }
+        li {
+            margin-bottom: 10px;
+        }
+        .highlight {
+            color: #da70d6; /* 蘭花紫重點 */
+            font-weight: bold;
+        }
+        .good-food {
+            color: #008000; /* 綠色健康食物 */
+            font-weight: bold;
+        }
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            font-size: 1.5em;
+            color: #777;
+            padding-top: 20px;
+            border-top: 1px solid #ccc;
+        }
+
+        /* Custom styles for the food info generator section */
+        .food-info-section {
+            background-color: #e6f7ff; /* Light blue background for this section */
+            border: 3px solid #87cefa; /* Light sky blue border */
+            border-radius: 20px;
+            padding: 30px;
+            margin-top: 50px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+        }
+        .food-info-section h2 {
+            color: #1e90ff; /* Dodger blue for this section's title */
+            font-size: 3em;
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: none; /* Remove border from H2 in this section */
+        }
+        .food-info-input label {
+            font-size: 2em; /* Larger label font */
+            color: #4682b4; /* Steel blue for label */
+            font-weight: bold;
+        }
+        .food-info-input input {
+            font-size: 1.8em; /* Larger input font */
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid #a8dadc; /* Light blue border */
+            width: 100%;
+            box-sizing: border-box; /* Include padding in width */
+        }
+        .food-info-button {
+            font-size: 2em; /* Larger button font */
+            padding: 15px 30px;
+            border-radius: 10px;
+            background-color: #3cb371; /* Medium sea green button */
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            width: 100%;
+        }
+        .food-info-button:hover {
+            background-color: #2e8b57; /* Darker green on hover */
+        }
+        .food-info-loading {
+            font-size: 1.8em;
+            color: #1e90ff; /* Dodger blue for loading text */
+            margin-top: 20px;
+        }
+        .food-info-results {
+            margin-top: 25px;
+            padding: 25px;
+            background-color: #f5fafd; /* Very light blue for results area */
+            border: 2px solid #b0e0e6; /* Powder blue border */
+            border-radius: 15px;
+            min-height: 180px; /* Increased min-height */
+            max-height: 450px; /* Increased max-height */
+            overflow-y: auto;
+            font-size: 1.6em; /* Slightly larger result text */
+            line-height: 1.6;
+            color: #444;
+            /* Custom scrollbar for result display (from your original code) */
+            &::-webkit-scrollbar {
+                width: 8px;
+            }
+            &::-webkit-scrollbar-track {
+                background: #e2e8f0; /* Lighter track */
+                border-radius: 10px;
+            }
+            &::-webkit-scrollbar-thumb {
+                background: #94a3b8; /* Darker thumb */
+                border-radius: 10px;
+            }
+            &::-webkit-scrollbar-thumb:hover {
+                background: #64748b; /* Even darker on hover */
+            }
+        }
+        .food-info-results p {
+            font-size: 1.6em; /* Ensure paragraphs inside results are large */
+        }
+        .food-info-results .text-red-500 {
+            color: #ff4500; /* Orange-red for error messages */
+        }
+    </style>
+</head>
+<body>
+
+    <h1>✨ 樂齡健康飲食指南 ✨</h1>
+
+    <div class="section">
+        <h2>🥦 均衡飲食好處多 🥦</h2>
+        <p>親愛的長輩們，吃得健康對我們的身體非常重要！均衡的飲食可以幫助我們保持活力，預防疾病，讓晚年生活更精彩。</p>
+        <p>記得每天都要吃不同種類的食物，才能攝取到身體需要的各種營養喔！</p>
+    </div>
+
+    <div class="section">
+        <h2>🍎 重要營養素報你知 🍎</h2>
+        <ul>
+            <li><span class="highlight">蛋白質：</span> 幫助修復身體、維持肌肉。多吃 <span class="good-food">豆類、魚、雞蛋、瘦肉</span>。</li>
+            <li><span class="highlight">膳食纖維：</span> 幫助腸道健康、穩定血糖。多吃 <span class="good-food">蔬菜、水果、全穀類（如糙米、燕麥）</span>。</li>
+            <li><span class="highlight">維生素與礦物質：</span> 維持身體正常運作。多吃 <span class="good-food">各種顏色的蔬菜水果</span>。</li>
+            <li><span class="highlight">健康脂肪：</span> 提供能量、保護心臟。選擇 <span class="good-food">植物油（如橄欖油、芥花油）、堅果、酪梨</span>。</li>
+            <li><span class="highlight">水分：</span> 身體不可或缺的元素。記得 <span class="good-food">多喝水</span>，不要等到口渴才喝。</li>
+        </ul>
+    </div>
+
+    <div class="warning">
+        <h2>🚨 三高危險食物，要小心！ 🚨</h2>
+        <p>為了我們的健康，以下這些食物要特別注意，盡量少碰或少量攝取，它們容易誘發高血壓、高血糖和高血脂喔！</p>
+        <ul>
+            <li><span class="highlight">高鹽食物：</span>
+                <ul>
+                    <li><span class="good-food">加工食品：</span> 香腸、培根、火腿、罐頭食物。</li>
+                    <li><span class="good-food">醃漬物：</span> 醬菜、鹹蛋、鹹魚。</li>
+                    <li><span class="good-food">重口味醬料：</span> 醬油、豆瓣醬、沙茶醬。</li>
+                    <li><span class="good-food">零食：</span> 洋芋片、餅乾、泡麵。</li>
+                    <li><span class="highlight">※ 提醒：</span> 鹽分過高容易造成高血壓，增加心臟負擔！</li>
+                </ul>
+            </li>
+            <li><span class="highlight">高糖食物：</span>
+                <ul>
+                    <li><span class="good-food">含糖飲料：</span> 汽水、手搖飲、果汁飲料。</li>
+                    <li><span class="good-food">甜點：</span> 蛋糕、餅乾、糖果、冰淇淋。</li>
+                    <li><span class="good-food">精緻澱粉：</span> 白麵包、白米飯（可適量搭配糙米）。</li>
+                    <li><span class="highlight">※ 提醒：</span> 糖分過高容易導致血糖不穩、肥胖，增加糖尿病風險！</li>
+                </ul>
+            </li>
+            <li><span class="highlight">高脂肪食物：</span>
+                <ul>
+                    <li><span class="good-food">油炸食品：</span> 炸雞、薯條、甜不辣。</li>
+                    <li><span class="good-food">肥肉、動物內臟：</span> 豬腳、大腸、雞皮。</li>
+                    <li><span class="good-food">加工肉品：</span> 熱狗、火腿。</li>
+                    <li><span class="good-food">糕點：</span> 酥皮點心、奶油蛋糕。</li>
+                    <li><span class="highlight">※ 提醒：</span> 不健康的脂肪容易造成膽固醇過高，增加心血管疾病風險！</li>
+                </ul>
+            </li>
+        </ul>
+        <p style="text-align: center; margin-top: 30px;"><span class="highlight">💖 健康是福，少油、少鹽、少糖是關鍵！ 💖</span></p>
+    </div>
+
+        <div class="food-info-section">
+        <h2>🔎 食物資訊查詢 🔍</h2>
+        <p style="font-size: 1.8em; text-align: center; color: #4682b4; margin-bottom: 25px;">在這裡輸入您想了解的食物名稱，就能查詢它的主要成分和營養資訊喔！</p>
+
+        <div class="food-info-input mb-6">
+            <label for="foodNameInput" class="block text-gray-700 text-sm font-semibold mb-2">請輸入食物名稱：</label>
+            <input
+                type="text"
+                id="foodNameInput"
+                placeholder="例如：蘋果、雞胸肉、燕麥"
+                class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
+            >
+        </div>
+
+        <button
+            id="searchButton"
+            class="food-info-button"
+        >
+            點我查詢資訊
+        </button>
+
+                <div id="loadingIndicator" class="food-info-loading mt-6 text-center font-medium hidden">
+            <div class="flex items-center justify-center space-x-2">
+                <svg class="animate-spin h-8 w-8 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span>正在查詢中，請稍候...</span>
+            </div>
+        </div>
+
+                <div id="resultsDisplay" class="food-info-results">
+            <p class="text-gray-500 italic">您可以在上方輸入食物名稱，點擊「點我查詢資訊」按鈕來查看詳細內容。</p>
+        </div>
+    </div>
+    
+    <div class="section">
+        <h2>🚶‍♀️ 飲食搭配運動更健康 🏃‍♂️</h2>
+        <p>除了吃得健康，適量的運動也同樣重要！每天走走路、做做伸展操，對身體都很有幫助。</p>
+        <p>如果您對飲食有任何疑問，或是有特殊的健康狀況，請務必諮詢您的醫生或營養師喔！</p>
+    </div>
+
+    <footer>
+        <p>© 2025 樂齡健康飲食指南。祝您身體健康，天天開心！</p>
+    </footer>
+
+    <script type="module">
+        // Get references to HTML elements
+        const foodNameInput = document.getElementById('foodNameInput');
+        const searchButton = document.getElementById('searchButton');
+        const loadingIndicator = document.getElementById('loadingIndicator');
+        const resultsDisplay = document.getElementById('resultsDisplay');
+
+        // Function to handle the search button click
+        async function handleSearch() {
+            const foodName = foodNameInput.value.trim();
+
+            if (!foodName) {
+                resultsDisplay.innerHTML = '<p class="text-red-500 font-medium">請輸入食物名稱喔！</p>';
+                return;
+            }
+
+            // Show loading indicator and clear previous results
+            loadingIndicator.classList.remove('hidden');
+            resultsDisplay.innerHTML = ''; // Clear content
+            searchButton.disabled = true; // Disable button during loading
+
+            try {
+                // Construct the prompt for the LLM
+                const prompt = `請針對長輩提供關於"${foodName}"的簡短且精確的資訊。內容需包含其主要成分、每100克或適當份量的主要營養事實（例如：卡路里、蛋白質、碳水化合物、脂肪，以及其是否有助於或需要注意三高問題）。請用繁體中文，並以清晰的標題如「主要成分」和「營養資訊」來格式化輸出，語氣請親切溫和。`;
+
+                // OpenRouter API configuration
+                const encodedkey = "c2stb3ItdjEtYWU2ZmYwMzIxZDkyYWI0NjU4ZjdjNDI5MTJmMmI0Z
