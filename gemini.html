@@ -1,0 +1,157 @@
+好的，這是一份為老年人設計的HTML文件，內容包含食物營養資訊以及對誘發三高（高血壓、高血糖、高血脂）食物的警告。字體已放大，並使用鮮豔的顏色，方便長輩閱讀。
+
+```html
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>樂齡健康飲食指南</title>
+    <style>
+        body {
+            font-family: "Microsoft JhengHei", sans-serif;
+            margin: 20px;
+            background-color: #f0f8ff; /* 淡藍色背景 */
+            color: #333;
+        }
+        h1 {
+            color: #ff4500; /* 橘紅色標題 */
+            font-size: 4em; /* 超大字體 */
+            text-align: center;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        h2 {
+            color: #2e8b57; /* 海綠色小標題 */
+            font-size: 2.5em;
+            border-bottom: 3px solid #2e8b57;
+            padding-bottom: 10px;
+            margin-top: 40px;
+        }
+        p, ul, li {
+            font-size: 1.8em; /* 大字體 */
+            line-height: 1.8;
+            color: #555;
+        }
+        .section {
+            background-color: #ffffff; /* 白色區塊背景 */
+            border-radius: 15px;
+            padding: 25px 35px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .warning {
+            background-color: #ffe0b2; /* 淺橘色警告區塊 */
+            border: 5px solid #ff6347; /* 番茄紅邊框 */
+            padding: 30px;
+            border-radius: 20px;
+            margin-top: 40px;
+            margin-bottom: 40px;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+        }
+        .warning h2 {
+            color: #dc143c; /* 鮮紅色警告標題 */
+            font-size: 3em;
+            text-align: center;
+            margin-top: 0;
+            margin-bottom: 20px;
+            border-bottom: none;
+        }
+        .warning p, .warning ul, .warning li {
+            color: #8b0000; /* 深紅色文字 */
+            font-size: 2.2em;
+            font-weight: bold;
+        }
+        ul {
+            list-style-type: disc;
+            padding-left: 30px;
+        }
+        li {
+            margin-bottom: 10px;
+        }
+        .highlight {
+            color: #da70d6; /* 蘭花紫重點 */
+            font-weight: bold;
+        }
+        .good-food {
+            color: #008000; /* 綠色健康食物 */
+            font-weight: bold;
+        }
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            font-size: 1.5em;
+            color: #777;
+            padding-top: 20px;
+            border-top: 1px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>✨ 樂齡健康飲食指南 ✨</h1>
+
+    <div class="section">
+        <h2>🥦 均衡飲食好處多 🥦</h2>
+        <p>親愛的長輩們，吃得健康對我們的身體非常重要！均衡的飲食可以幫助我們保持活力，預防疾病，讓晚年生活更精彩。</p>
+        <p>記得每天都要吃不同種類的食物，才能攝取到身體需要的各種營養喔！</p>
+    </div>
+
+    <div class="section">
+        <h2>🍎 重要營養素報你知 🍎</h2>
+        <ul>
+            <li><span class="highlight">蛋白質：</span> 幫助修復身體、維持肌肉。多吃 <span class="good-food">豆類、魚、雞蛋、瘦肉</span>。</li>
+            <li><span class="highlight">膳食纖維：</span> 幫助腸道健康、穩定血糖。多吃 <span class="good-food">蔬菜、水果、全穀類（如糙米、燕麥）</span>。</li>
+            <li><span class="highlight">維生素與礦物質：</span> 維持身體正常運作。多吃 <span class="good-food">各種顏色的蔬菜水果</span>。</li>
+            <li><span class="highlight">健康脂肪：</span> 提供能量、保護心臟。選擇 <span class="good-food">植物油（如橄欖油、芥花油）、堅果、酪梨</span>。</li>
+            <li><span class="highlight">水分：</span> 身體不可或缺的元素。記得 <span class="good-food">多喝水</span>，不要等到口渴才喝。</li>
+        </ul>
+    </div>
+
+    <div class="warning">
+        <h2>🚨 三高危險食物，要小心！ 🚨</h2>
+        <p>為了我們的健康，以下這些食物要特別注意，盡量少碰或少量攝取，它們容易誘發高血壓、高血糖和高血脂喔！</p>
+        <ul>
+            <li><span class="highlight">高鹽食物：</span>
+                <ul>
+                    <li><span class="good-food">加工食品：</span> 香腸、培根、火腿、罐頭食物。</li>
+                    <li><span class="good-food">醃漬物：</span> 醬菜、鹹蛋、鹹魚。</li>
+                    <li><span class="good-food">重口味醬料：</span> 醬油、豆瓣醬、沙茶醬。</li>
+                    <li><span class="good-food">零食：</span> 洋芋片、餅乾、泡麵。</li>
+                    <li><span class="highlight">※ 提醒：</span> 鹽分過高容易造成高血壓，增加心臟負擔！</li>
+                </ul>
+            </li>
+            <li><span class="highlight">高糖食物：</span>
+                <ul>
+                    <li><span class="good-food">含糖飲料：</span> 汽水、手搖飲、果汁飲料。</li>
+                    <li><span class="good-food">甜點：</span> 蛋糕、餅乾、糖果、冰淇淋。</li>
+                    <li><span class="good-food">精緻澱粉：</span> 白麵包、白米飯（可適量搭配糙米）。</li>
+                    <li><span class="highlight">※ 提醒：</span> 糖分過高容易導致血糖不穩、肥胖，增加糖尿病風險！</li>
+                </ul>
+            </li>
+            <li><span class="highlight">高脂肪食物：</span>
+                <ul>
+                    <li><span class="good-food">油炸食品：</span> 炸雞、薯條、甜不辣。</li>
+                    <li><span class="good-food">肥肉、動物內臟：</span> 豬腳、大腸、雞皮。</li>
+                    <li><span class="good-food">加工肉品：</span> 熱狗、火腿。</li>
+                    <li><span class="good-food">糕點：</span> 酥皮點心、奶油蛋糕。</li>
+                    <li><span class="highlight">※ 提醒：</span> 不健康的脂肪容易造成膽固醇過高，增加心血管疾病風險！</li>
+                </ul>
+            </li>
+        </ul>
+        <p style="text-align: center; margin-top: 30px;"><span class="highlight">💖 健康是福，少油、少鹽、少糖是關鍵！ 💖</span></p>
+    </div>
+
+    <div class="section">
+        <h2>🚶‍♀️ 飲食搭配運動更健康 🏃‍♂️</h2>
+        <p>除了吃得健康，適量的運動也同樣重要！每天走走路、做做伸展操，對身體都很有幫助。</p>
+        <p>如果您對飲食有任何疑問，或是有特殊的健康狀況，請務必諮詢您的醫生或營養師喔！</p>
+    </div>
+
+    <footer>
+        <p>© 2025 樂齡健康飲食指南。祝您身體健康，天天開心！</p>
+    </footer>
+
+</body>
+</html>
+```
