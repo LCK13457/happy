@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>食物營養查詢</title>
+ <script src="https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.production.min.js"></script>
+ <script src="https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.production.min.js"></script>
+ <script src="https://cdn.jsdelivr.net/npm/@babel/standalone@7.22.9/babel.min.js"></script>
+ <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+ <!-- API Key (BASE64 encoded) -->
+ <script>
+   const ENCODED_API_KEY = 'YOUR_BASE64_ENCODED_OPENROUTER_API_KEY'; // Replace with your BASE64-encoded OpenRouterAPI key
+ </script>
+ <div id="root"></div>
+ <script type="text/babel">
+   function App() {
+     const [foodQuery, setFoodQuery] = React.useState('');
+     const [nutritionData, setNutritionData] = React.useState(null);
+     const [error, setError] = React.useState('');
+     const [loading, setLoading] = React.useState(false);
+     const [conditions, setConditions] = React.useState({
+       hypertension: false,
+       diabetes: false,
+       hyperlipidemia: false,
+       heart_disease: false,
+       kidney_disease: false,
+     });
+     const [showTip, setShowTip] = React.useState(true);
+ 
+     // Health tips array
+     const healthTips = [
+       '保持均衡飲食，多吃蔬果，減少油膩食物以保護心臟健康。',
+       '每天飲用足夠水，幫助腎臟功能，建議每日 1.5-2 升。',
+       '減少鹽分攝取，控制血壓，選擇低鈉食物如新鮮蔬菜。',
+       '定期運動，如散步或太極，有助於控制血糖和心血管健康。',
+       '避免高糖食物，選擇全穀物以穩定血糖，預防糖尿病惡化。'
+     ];
+ 
+     // Select random tip on load
+     const [currentTip, setCurrentTip] = React.useState(
+       healthTips[Math.floor(Math.random() * healthTips.length)]
+     );
+ 
+     // Decode API key
+     const decodeApiKey = () => {
+       try {
+         return atob(ENCODED_API_KEY);
+       } catch (err) {
+         console.error('Failed to decode API key:', err);
+         return '';
+       }
+     };
+ 
+     // Handle checkbox changes
+     const handleConditionChange = (condition) => {
+       setConditions(prev => ({ ...prev, [condition]: !prev[condition] }));
+     };
+ 
+     // Handle search submission
+     const handleSubmit = async (e) => {
+       e.preventDefault();
+       if (!foodQuery.trim()) {
+         setError('請輸入食物名稱。');
+         return;
+       }
+       setError('');
+       setLoading(true);
+       try {
+         const apiKey = decodeApiKey();
+         if (!apiKey) {
+           setError('無效的 API 密鑰。');
+           setLoading(false);
+           return;
+         }
+ 
+         // Construct prompt for OpenRouter
+         const selectedConditions = Object.keys(conditions)
+           .filter(key => conditions[key])
+           .map(key => {
+             if (key === 'hypertension') return '高血壓';
+             if (key === 'diabetes') return '糖尿病';
+             if (key === 'hyperlipidemia') return '高膽固醇';
+             if (key === 'heart_disease') return '心臟病';
+             if (key === 'kidney_disease') return '腎病';
+           });
+         const prompt = `提供食物 "${foodQuery}" 的成分、營養信息（卡路里、蛋白質、脂肪、碳水化合物、鈉、糖）以及是否適合患有以下疾病的長者食用：${selectedConditions.join(', ') || '無特定疾病'}。以JSON 格式返回，包含食物名稱、成分、營養信息和適合性分析。`;
+ 
+         const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+           method: 'POST',
+           headers: {
+             'Authorization': `Bearer ${apiKey}`,
+             'Content-Type': 'application/json',
+           },
+           body: JSON.stringify({
+             model: 'meta-ai/llama-3.1-8b-instruct', // Adjust model as needed
+             messages: [{ role: 'user', content: prompt }],
+           }),
+         });
+ 
+         const data = await response.json();
+         if (data.choices && data.choices[0].message.content) {
+           const result = JSON.parse(data.choices[0].message.content);
+           setNutritionData(result.food);
+         } else {
+           setNutritionData(null);
+           setError('找不到此食物的營養數據。');
+         }
+       } catch (err) {
+         setError('搜索時發生錯誤，請稍後再試。');
+         setNutritionData(null);
+       } finally {
+         setLoading(false);
+       }
+     };
+ 
+     return (
+       <div className="relative">
+         {/* Health Tip Pop-up */}
+         {showTip && (
+           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+             <div className="bg-white p-8 rounded-lg shadow-lg max-w-md">
+               <h2 className="text-2xl font-bold mb-4">健康小貼士</h2>
+               <p className="text-xl mb-6">{currentTip}</p>
+               <button
+                 onClick={() => setShowTip(false)}
+                 className="w-full bg-blue-500 text-white p-3 rounded text-xl hover:bg-blue-600"
+               >
+                 我明白
+               </button>
+             </div>
+           </div>
+         )}
+ 
+         {/* Main Content */}
+         <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+           <h1 className="text-3xl font-bold text-center mb-6">食物營養查詢</h1>
+           <div className="mb-4">
+             <h3 className="text-xl font-semibold mb-2">選擇健康狀況</h3>
+             <div className="grid grid-cols-1 gap-2">
+               {[
+                 { id: 'hypertension', label: '高血壓' },
+                 { id: 'diabetes', label: '糖尿病' },
+                 { id: 'hyperlipidemia', label: '高膽固醇' },
+                 { id: 'heart_disease', label: '心臟病' },
+                 { id: 'kidney_disease', label: '腎病' },
+               ].map(condition => (
+                 <label key={condition.id} className="flex items-center text-xl">
+                   <input
+                     type="checkbox"
+                     checked={conditions[condition.id]}
+                     onChange={() => handleConditionChange(condition.id)}
+                     className="mr-2 h-5 w-5"
+                   />
+                   {condition.label}
+                 </label>
+               ))}
+             </div>
+           </div>
+           <div className="mb-4">
+             <input
+               type="text"
+               value={foodQuery}
+               onChange={(e) => setFoodQuery(e.target.value)}
+               placeholder="輸入食物名稱（例如：蘋果）"
+               className="w-full p-3 border rounded text-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+             />
+             <button
+               onClick={handleSubmit}
+               disabled={loading}
+               className="w-full mt-3 bg-blue-500 text-white p-3 rounded text-xl hover:bg-blue-600 disabled:bg-blue-300"
+             >
+               {loading ? '載入中...' : '查詢'}
+             </button>
+           </div>
+           {error && <p className="text-red-500 text-center text-xl">{error}</p>}
+           {nutritionData && (
+             <div className="mt-4 p-4 bg-gray-50 rounded">
+               <h2 className="text-2xl font-semibold">{nutritionData.name}</h2>
+               <p className="text-xl"><strong>成分：</strong> {nutritionData.ingredients.join(', ')}</p>
+               <p className="text-xl"><strong>卡路里：</strong> {nutritionData.nutrition.calories}</p>
+               <p className="text-xl"><strong>蛋白質：</strong> {nutritionData.nutrition.protein}</p>
+               <p className="text-xl"><strong>脂肪：</strong> {nutritionData.nutrition.fat}</p>
+               <p className="text-xl"><strong>碳水化合物：</strong> {nutritionData.nutrition.carbs}</p>
+               <p className="text-xl"><strong>鈉：</strong> {nutritionData.nutrition.sodium}</p>
+               <p className="text-xl"><strong>糖：</strong> {nutritionData.nutrition.sugar}</p>
+               <h3 className="text-xl font-semibold mt-4">適合性分析</h3>
+               {Object.entries(nutritionData.suitability).map(([condition, status]) => (
+                 <p key={condition} className="text-xl">{condition}: {status}</p>
+               ))}
+             </div>
+           )}
+         </div>
+       </div>
+     );
+   }
+ 
+   ReactDOM.render(<App />, document.getElementById('root'));
+ </script>
+</body>
+</html>
