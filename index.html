@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elderly Diet Management for Three Highs Prevention</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .container {
+            background-color: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .search-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: #e8f4f8;
+            border-radius: 8px;
+        }
+        .result-section {
+            display: none;
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        .warning {
+            background-color: #fde8e8;
+            border-left: 4px solid #e74c3c;
+        }
+        .safe {
+            background-color: #e8f8e8;
+            border-left: 4px solid #2ecc71;
+        }
+        input, select, button {
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            cursor: pointer;
+            border: none;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #3498db;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        .nutrient-info {
+            margin-top: 30px;
+        }
+        .nutrient-card {
+            display: inline-block;
+            width: 30%;
+            margin: 1%;
+            padding: 15px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            vertical-align: top;
+        }
+        .nutrient-card h3 {
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 8px;
+        }
+        @media (max-width: 768px) {
+            .nutrient-card {
+                width: 100%;
+                margin: 10px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Elderly Diet Management for Three Highs Prevention</h1>
+        <div class="search-section">
+            <h2>Check Food Ingredients</h2>
+            <p>Enter a food item to check if it's suitable for elderly with three highs conditions.</p>
+            <div>
+                <input type="text" id="foodInput" placeholder="Enter food name (e.g., fried chicken)" style="width: 70%;">
+                <button onclick="checkFood()">Check Ingredients</button>
+            </div>
+            <div id="loading" style="display: none; margin-top: 10px;">Loading...</div>
+        </div>
+        <div id="resultSection" class="result-section"></div>
+    </div>
+
+    <script>
+        // Function to decode Base64 API key
+        function decodeApiKey(encodedKey) {
+            try {
+                return atob(encodedKey);
+            } catch (e) {
+                console.error('Error decoding API key:', e);
+                return null;
+            }
+        }
+
+        // Base64-encoded API key (replace with your actual encoded key)
+        const encodedApiKey = 'c2stb3ItdjEtYTRhY2QxYWMzOGVlNTUwMjg3NzlmNmI3YzI4ZGU0NjM1MzNhMDMyYjE2ZmRkMWFjMzk2OTJhZjIwNTdjODg1MQ==';
+        const apiKey = decodeApiKey(encodedApiKey);
+
+        // API endpoint (replace with your actual API endpoint)
+        const apiEndpoint = 'https://api.example.com/food-data';
+
+        function checkFood() {
+            const foodInput = document.getElementById('foodInput').value.toLowerCase();
+            const resultSection = document.getElementById('resultSection');
+            const loading = document.getElementById('loading');
+
+            if (!foodInput) {
+                alert("Please enter a food name");
+                return;
+            }
+
+            if (!apiKey) {
+                resultSection.innerHTML = `
+                    <div class="warning">
+                        <p>Error decoding API key. Please contact support.</p>
+                    </div>
+                `;
+                resultSection.style.display = "block";
+                return;
+            }
+
+            loading.style.display = "block";
+            resultSection.style.display = "none";
+
+            // Make API request
+            fetch(`${apiEndpoint}?food=${encodeURIComponent(foodInput)}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${apiKey}`,
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                loading.style.display = "none";
+                if (data && data.food) {
+                    const food = data.food;
+                    let resultHTML = `
+                        <h3>Results for: ${foodInput.charAt(0).toUpperCase() + foodInput.slice(1)}</h3>
+                        <p><strong>Ingredients:</strong> ${food.ingredients.join(', ')}</p>
+                        <table>
+                            <tr>
+                                <th>Nutrient</th>
+                                <th>Amount (per serving)</th>
+                                <th>Concern Level</th>
+                            </tr>
+                            <tr>
+                                <td>Sodium</td>
+                                <td>${food.sodium}mg</td>
+                                <td>${food.sodium > 500 ? 'High' : 'Low'}</td>
+                            </tr>
+                            <tr>
+                                <td>Sugar</td>
+                                <td>${food.sugar}g</td>
+                                <td>${food.sugar > 5 ? 'High' : 'Low'}</td>
+                            </tr>
+                            <tr>
+                                <td>Saturated Fat</td>
+                                <td>${food.saturatedFat}g</td>
+                                <td>${food.saturatedFat > 3 ? 'High' : 'Low'}</td>
+                            </tr>
+                            <tr>
+                                <td>Glycemic Index</td>
+                                <td>${food.glycemicIndex}</td>
+                                <td>${food.glycemicIndex > 70 ? 'High' : food.glycemicIndex > 55 ? 'Medium' : 'Low'}</td>
+                            </tr>
+                        </table>
+                        <div class="${food.status === 'warning' ? 'warning' : 'safe'}" style="margin-top: 20px; padding: 15px;">
+                            <strong>Recommendation:</strong> ${food.message}
+                        </div>
+                    `;
+                    resultSection.innerHTML = resultHTML;
+                    resultSection.style.display = "block";
+                } else {
+                    resultSection.innerHTML = `
+                        <div class="warning">
+                            <p>Food not found in our database. Please try another item or consult with a nutritionist.</p>
+                            <p>Common safe foods for three highs: steamed fish, leafy greens, whole grains, berries, nuts (unsalted).</p>
+                        </div>
+                    `;
+                    resultSection.style.display = "block";
+                }
+            })
+            .catch(error => {
+                loading.style.display = "none";
+                console.error('Error fetching food data:', error);
+                resultSection.innerHTML = `
+                    <div class="warning">
+                        <p>Error fetching food data. Please try again later.</p>
+                        <p>Common safe foods for three highs: steamed fish, leafy greens, whole grains, berries, nuts (unsalted).</p>
+                    </div>
+                `;
+                resultSection.style.display = "block";
+            });
+        }
+    </script>
+</body>
+</html>
